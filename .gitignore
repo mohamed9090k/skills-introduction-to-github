@@ -35,3 +35,22 @@
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# Next.js #
+###########
+.next/
+out/
+build/
+dist/
+node_modules/
+
+# Environment variables #
+.env
+.env*.local
+
+# Vercel #
+.vercel
+
+# TypeScript #
+*.tsbuildinfo
+next-env.d.ts

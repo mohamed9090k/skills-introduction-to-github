@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background-start: #f97316;
+    --background-end: #ea580c;
+    --gold-glow: #ffd700;
+    --glass-bg: rgba(255, 255, 255, 0.1);
+    --glass-border: rgba(255, 255, 255, 0.2);
+  }
+
+  * {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+  }
+
+  html,
+  body {
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+
+  body {
+    color: rgb(var(--foreground-rgb));
+    background: linear-gradient(
+        to bottom,
+        transparent,
+        rgb(var(--background-end))
+      )
+      rgb(var(--background-start));
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  .glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+  }
+
+  .gold-gradient {
+    background: linear-gradient(135deg, #ffd700, #ffed4e, #f59e0b);
+  }
+
+  .mesh-gradient {
+    background: radial-gradient(circle at 20% 50%, rgba(255, 215, 0, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(249, 115, 22, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(234, 88, 12, 0.3) 0%, transparent 50%);
+  }
+
+  .hero-gradient {
+    background: linear-gradient(135deg, 
+      rgba(249, 115, 22, 0.9) 0%, 
+      rgba(234, 88, 12, 0.8) 25%, 
+      rgba(255, 215, 0, 0.6) 50%, 
+      rgba(245, 158, 11, 0.8) 75%, 
+      rgba(251, 191, 36, 0.9) 100%);
+  }
+}
