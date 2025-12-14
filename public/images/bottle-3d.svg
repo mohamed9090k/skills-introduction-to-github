@@ -1,0 +1,50 @@
+<svg width="1200" height="1600" viewBox="0 0 1200 1600" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(360 360) rotate(55) scale(850 820)">
+      <stop stop-color="#C7A15A" stop-opacity="0.42"/>
+      <stop offset="0.55" stop-color="#3A8087" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#081626" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="glass" x1="388" y1="340" x2="856" y2="1280" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFFFF" stop-opacity="0.40"/>
+      <stop offset="0.25" stop-color="#FFFFFF" stop-opacity="0.12"/>
+      <stop offset="0.55" stop-color="#BFE3E6" stop-opacity="0.08"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0.16"/>
+    </linearGradient>
+    <linearGradient id="edge" x1="470" y1="470" x2="780" y2="1230" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFFFF" stop-opacity="0.55"/>
+      <stop offset="0.5" stop-color="#FFFFFF" stop-opacity="0.12"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0.32"/>
+    </linearGradient>
+    <linearGradient id="cap" x1="470" y1="220" x2="730" y2="430" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#D6B46C"/>
+      <stop offset="0.45" stop-color="#C7A15A"/>
+      <stop offset="1" stop-color="#815F2A"/>
+    </linearGradient>
+    <filter id="soft" x="140" y="160" width="920" height="1320" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="18" result="b"/>
+      <feColorMatrix in="b" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.55 0"/>
+      <feOffset dy="26"/>
+      <feBlend in="SourceGraphic" mode="normal"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="1600" fill="url(#glow)"/>
+
+  <g filter="url(#soft)">
+    <path d="M450 190C450 147 485 112 528 112H672C715 112 750 147 750 190V300C750 333 771 363 802 375C850 395 884 442 884 497V1214C884 1323 795 1412 686 1412H514C405 1412 316 1323 316 1214V497C316 442 350 395 398 375C429 363 450 333 450 300V190Z" fill="url(#glass)" stroke="rgba(255,255,255,0.18)" stroke-width="4"/>
+
+    <path d="M510 112H690V155C690 187 716 213 748 213H750V318C750 339 764 359 784 368C841 393 884 447 884 511V1214C884 1323 795 1412 686 1412H514C405 1412 316 1323 316 1214V511C316 447 359 393 416 368C436 359 450 339 450 318V213H452C484 213 510 187 510 155V112Z" fill="url(#edge)" opacity="0.55"/>
+
+    <path d="M458 112H742V214C742 237 724 255 701 255H499C476 255 458 237 458 214V112Z" fill="url(#cap)"/>
+
+    <path d="M410 920C410 848 468 790 540 790H660C732 790 790 848 790 920V1022C790 1094 732 1152 660 1152H540C468 1152 410 1094 410 1022V920Z" fill="rgba(8,22,38,0.62)" stroke="rgba(199,161,90,0.30)" stroke-width="3"/>
+    <path d="M455 875H745V910H455V875Z" fill="rgba(255,255,255,0.16)"/>
+    <path d="M465 980C465 952 488 929 516 929H684C712 929 735 952 735 980V985C735 1013 712 1036 684 1036H516C488 1036 465 1013 465 985V980Z" fill="rgba(255,255,255,0.10)"/>
+
+    <path d="M382 540C382 443 461 364 558 364H642C739 364 818 443 818 540V710C818 807 739 886 642 886H558C461 886 382 807 382 710V540Z" fill="rgba(255,255,255,0.06)"/>
+
+    <path d="M420 410C520 370 595 392 680 448" stroke="rgba(255,255,255,0.22)" stroke-width="14" stroke-linecap="round"/>
+    <path d="M380 690C450 630 520 612 640 658" stroke="rgba(191,227,230,0.18)" stroke-width="10" stroke-linecap="round"/>
+  </g>
+</svg>
