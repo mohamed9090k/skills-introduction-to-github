@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Perfume Catalog - Demo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        .float-animation {
+            animation: float 3s ease-in-out infinite;
+        }
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-50 via-white to-gray-50 min-h-screen">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- Header -->
+        <header class="text-center mb-12">
+            <h1 class="text-5xl md:text-6xl font-bold text-gray-900 mb-4">Premium Fragrances</h1>
+            <p class="text-xl text-gray-600">Discover your signature scent from our curated collection</p>
+        </header>
+
+        <!-- Filters -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-900">Discover Perfumes</h2>
+                    <p class="text-sm text-gray-600 mt-1"><span id="result-count">95</span> fragrances found</p>
+                </div>
+                <button onclick="clearFilters()" class="text-sm text-gray-600 hover:text-gray-900 font-medium transition-colors">
+                    Clear all filters
+                </button>
+            </div>
+
+            <div class="space-y-6">
+                <!-- Search -->
+                <div>
+                    <label for="search" class="block text-sm font-medium text-gray-700 mb-2">Search</label>
+                    <div class="relative">
+                        <input
+                            id="search"
+                            type="text"
+                            placeholder="Search by name, house, or notes..."
+                            oninput="applyFilters()"
+                            class="w-full px-4 py-3 pl-11 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all"
+                        />
+                        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Scent Family -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-3">Scent Family</label>
+                    <div class="flex flex-wrap gap-2" id="scent-families"></div>
+                </div>
+
+                <!-- Concentration -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-3">Concentration</label>
+                    <div class="grid grid-cols-2 gap-2" id="concentrations"></div>
+                </div>
+
+                <!-- Price Range -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-3">
+                        Price Range: $<span id="min-price-display">38</span> - $<span id="max-price-display">445</span>
+                    </label>
+                    <div class="space-y-3">
+                        <input type="range" id="min-price" min="38" max="445" value="38" oninput="applyFilters()" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-gray-900" />
+                        <input type="range" id="max-price" min="38" max="445" value="445" oninput="applyFilters()" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-gray-900" />
+                    </div>
+                </div>
+
+                <!-- Sort -->
+                <div>
+                    <label for="sort" class="block text-sm font-medium text-gray-700 mb-2">Sort By</label>
+                    <select id="sort" onchange="applyFilters()" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all bg-white">
+                        <option value="name-asc">Name (A-Z)</option>
+                        <option value="price-asc">Price (Low to High)</option>
+                        <option value="price-desc">Price (High to Low)</option>
+                        <option value="rating-desc">Rating (High to Low)</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Products Grid -->
+        <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
+
+        <!-- Empty State -->
+        <div id="empty-state" class="hidden text-center py-20">
+            <div class="inline-flex items-center justify-center w-24 h-24 bg-gray-100 rounded-full mb-6">
+                <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </div>
+            <h3 class="text-2xl font-semibold text-gray-900 mb-2">No fragrances found</h3>
+            <p class="text-gray-600 max-w-md mx-auto">We couldn't find any perfumes matching your criteria. Try adjusting your filters.</p>
+        </div>
+
+        <!-- Result Summary -->
+        <div id="result-summary" class="mt-12 text-center text-gray-600">
+            <p class="text-sm">Showing <span id="showing-count">95</span> of 95 fragrances</p>
+        </div>
+    </div>
+
+    <script>
+        // Simplified perfume data (first 10 for demo)
+        const perfumes = [
+            { id: '1', name: 'Bleu de Chanel', house: 'Chanel', price: 135, rating: 4.5, reviewCount: 2847, scentFamily: 'Woody', concentration: 'Eau de Parfum' },
+            { id: '2', name: 'Santal 33', house: 'Le Labo', price: 240, rating: 4.7, reviewCount: 1923, scentFamily: 'Woody', concentration: 'Eau de Parfum' },
+            { id: '3', name: 'Black Orchid', house: 'Tom Ford', price: 145, rating: 4.4, reviewCount: 3421, scentFamily: 'Oriental', concentration: 'Eau de Parfum' },
+            { id: '4', name: 'La Vie Est Belle', house: 'Lancôme', price: 98, rating: 4.6, reviewCount: 5632, scentFamily: 'Gourmand', concentration: 'Eau de Parfum' },
+            { id: '5', name: 'Acqua di Gio', house: 'Giorgio Armani', price: 92, rating: 4.3, reviewCount: 4821, scentFamily: 'Fresh', concentration: 'Eau de Toilette' },
+            { id: '6', name: 'Coco Mademoiselle', house: 'Chanel', price: 135, rating: 4.8, reviewCount: 6234, scentFamily: 'Floral', concentration: 'Eau de Parfum' },
+            { id: '7', name: 'Sauvage', house: 'Dior', price: 110, rating: 4.5, reviewCount: 7821, scentFamily: 'Fresh', concentration: 'Eau de Parfum' },
+            { id: '8', name: 'Aventus', house: 'Creed', price: 445, rating: 4.9, reviewCount: 3921, scentFamily: 'Fresh', concentration: 'Eau de Parfum' },
+            { id: '9', name: 'Light Blue', house: 'Dolce & Gabbana', price: 88, rating: 4.4, reviewCount: 5234, scentFamily: 'Fresh', concentration: 'Eau de Toilette' },
+            { id: '10', name: 'Good Girl', house: 'Carolina Herrera', price: 115, rating: 4.6, reviewCount: 4521, scentFamily: 'Gourmand', concentration: 'Eau de Parfum' },
+        ];
+
+        const scentFamilies = ['Floral', 'Citrus', 'Woody', 'Oriental', 'Fresh', 'Gourmand'];
+        const concentrations = ['Eau de Parfum', 'Eau de Toilette', 'Parfum', 'Eau de Cologne'];
+        
+        let selectedScentFamilies = [];
+        let selectedConcentrations = [];
+
+        function initFilters() {
+            const scentFamiliesContainer = document.getElementById('scent-families');
+            scentFamilies.forEach(family => {
+                const button = document.createElement('button');
+                button.textContent = family;
+                button.className = 'px-4 py-2 rounded-full text-sm font-medium transition-all bg-gray-100 text-gray-700 hover:bg-gray-200';
+                button.onclick = () => toggleScentFamily(family, button);
+                scentFamiliesContainer.appendChild(button);
+            });
+
+            const concentrationsContainer = document.getElementById('concentrations');
+            concentrations.forEach(concentration => {
+                const button = document.createElement('button');
+                button.textContent = concentration;
+                button.className = 'px-4 py-2 rounded-lg text-sm font-medium transition-all border bg-white text-gray-700 border-gray-300 hover:border-gray-400';
+                button.onclick = () => toggleConcentration(concentration, button);
+                concentrationsContainer.appendChild(button);
+            });
+        }
+
+        function toggleScentFamily(family, button) {
+            if (selectedScentFamilies.includes(family)) {
+                selectedScentFamilies = selectedScentFamilies.filter(f => f !== family);
+                button.className = 'px-4 py-2 rounded-full text-sm font-medium transition-all bg-gray-100 text-gray-700 hover:bg-gray-200';
+            } else {
+                selectedScentFamilies.push(family);
+                button.className = 'px-4 py-2 rounded-full text-sm font-medium transition-all bg-gray-900 text-white shadow-lg';
+            }
+            applyFilters();
+        }
+
+        function toggleConcentration(concentration, button) {
+            if (selectedConcentrations.includes(concentration)) {
+                selectedConcentrations = selectedConcentrations.filter(c => c !== concentration);
+                button.className = 'px-4 py-2 rounded-lg text-sm font-medium transition-all border bg-white text-gray-700 border-gray-300 hover:border-gray-400';
+            } else {
+                selectedConcentrations.push(concentration);
+                button.className = 'px-4 py-2 rounded-lg text-sm font-medium transition-all border bg-gray-900 text-white border-gray-900';
+            }
+            applyFilters();
+        }
+
+        function applyFilters() {
+            const search = document.getElementById('search').value.toLowerCase();
+            const minPrice = parseInt(document.getElementById('min-price').value);
+            const maxPrice = parseInt(document.getElementById('max-price').value);
+            const sortOrder = document.getElementById('sort').value;
+
+            document.getElementById('min-price-display').textContent = minPrice;
+            document.getElementById('max-price-display').textContent = maxPrice;
+
+            let filtered = perfumes.filter(perfume => {
+                const matchesSearch = !search || perfume.name.toLowerCase().includes(search) || perfume.house.toLowerCase().includes(search);
+                const matchesScentFamily = selectedScentFamilies.length === 0 || selectedScentFamilies.includes(perfume.scentFamily);
+                const matchesConcentration = selectedConcentrations.length === 0 || selectedConcentrations.includes(perfume.concentration);
+                const matchesPrice = perfume.price >= minPrice && perfume.price <= maxPrice;
+                return matchesSearch && matchesScentFamily && matchesConcentration && matchesPrice;
+            });
+
+            // Sort
+            switch (sortOrder) {
+                case 'price-asc': filtered.sort((a, b) => a.price - b.price); break;
+                case 'price-desc': filtered.sort((a, b) => b.price - a.price); break;
+                case 'rating-desc': filtered.sort((a, b) => b.rating - a.rating); break;
+                default: filtered.sort((a, b) => a.name.localeCompare(b.name));
+            }
+
+            renderProducts(filtered);
+        }
+
+        function renderProducts(products) {
+            const grid = document.getElementById('products-grid');
+            const emptyState = document.getElementById('empty-state');
+            const resultSummary = document.getElementById('result-summary');
+
+            document.getElementById('result-count').textContent = products.length;
+            document.getElementById('showing-count').textContent = products.length;
+
+            if (products.length === 0) {
+                grid.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+                resultSummary.classList.add('hidden');
+            } else {
+                grid.classList.remove('hidden');
+                emptyState.classList.add('hidden');
+                resultSummary.classList.remove('hidden');
+
+                grid.innerHTML = products.map(perfume => `
+                    <div class="group relative bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300">
+                        <div class="relative aspect-[3/4] overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
+                            <div class="relative w-full h-full flex items-center justify-center p-6">
+                                <div class="absolute inset-0 bg-gradient-to-br from-${getScentFamilyColor(perfume.scentFamily)}-200/20 via-purple-200/20 to-rose-200/20 transition-opacity duration-300"></div>
+                                <div class="relative z-10 float-animation">
+                                    <div class="absolute inset-0 blur-2xl opacity-40 bg-${getScentFamilyColor(perfume.scentFamily)}-300"></div>
+                                    <div class="relative z-10 w-32 h-48 bg-gray-200 rounded-lg flex items-center justify-center text-gray-500 text-sm">Perfume</div>
+                                </div>
+                            </div>
+                            <div class="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                <button class="w-full py-3 bg-white text-black font-semibold rounded-lg hover:bg-gray-100 transition-colors duration-200 shadow-lg">Add to Bag</button>
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <div class="flex items-start justify-between mb-2">
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">${perfume.house}</p>
+                                    <h3 class="text-lg font-semibold text-gray-900 truncate">${perfume.name}</h3>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-1 mb-2">
+                                ${[...Array(5)].map((_, i) => `
+                                    <svg class="w-4 h-4 ${i < Math.floor(perfume.rating) ? 'text-yellow-400 fill-current' : 'text-gray-300 fill-current'}" viewBox="0 0 20 20">
+                                        <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+                                    </svg>
+                                `).join('')}
+                                <span class="text-sm text-gray-600 ml-1">(${perfume.reviewCount.toLocaleString()})</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <p class="text-2xl font-bold text-gray-900">$${perfume.price}</p>
+                                <div class="flex flex-col items-end gap-1">
+                                    <span class="text-xs px-2 py-1 bg-gray-100 text-gray-700 rounded-full font-medium">${perfume.scentFamily}</span>
+                                    <span class="text-xs text-gray-500">${perfume.concentration}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function getScentFamilyColor(family) {
+            const colors = {
+                'Floral': 'pink',
+                'Citrus': 'yellow',
+                'Woody': 'amber',
+                'Oriental': 'orange',
+                'Fresh': 'cyan',
+                'Gourmand': 'purple'
+            };
+            return colors[family] || 'gray';
+        }
+
+        function clearFilters() {
+            document.getElementById('search').value = '';
+            document.getElementById('min-price').value = 38;
+            document.getElementById('max-price').value = 445;
+            document.getElementById('sort').value = 'name-asc';
+            selectedScentFamilies = [];
+            selectedConcentrations = [];
+            
+            document.querySelectorAll('#scent-families button').forEach(btn => {
+                btn.className = 'px-4 py-2 rounded-full text-sm font-medium transition-all bg-gray-100 text-gray-700 hover:bg-gray-200';
+            });
+            document.querySelectorAll('#concentrations button').forEach(btn => {
+                btn.className = 'px-4 py-2 rounded-lg text-sm font-medium transition-all border bg-white text-gray-700 border-gray-300 hover:border-gray-400';
+            });
+            
+            applyFilters();
+        }
+
+        // Initialize on load
+        initFilters();
+        applyFilters();
+    </script>
+</body>
+</html>
